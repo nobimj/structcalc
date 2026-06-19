@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 14mm 12mm 16mm 12mm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.35;
+            color: #222;
+            margin: 0;
+        }
+        .print-layout {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .print-layout thead {
+            display: table-header-group;
+        }
+        .print-layout tfoot {
+            display: table-footer-group;
+        }
+        .page-header {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8mm;
+        }
+        .page-header th,
+        .page-header td {
+            border: 1px solid #444;
+            padding: 5px 7px;
+            vertical-align: top;
+        }
+        .page-header th {
+            width: 24mm;
+            background: #f0f0f0;
+            text-align: left;
+        }
+        .identity-row td {
+            width: 33.33%;
+        }
+        .content-cell {
+            padding: 0;
+        }
+        h1, h2, h3, h4 {
+            margin: 0 0 6px 0;
+            color: #111;
+        }
+        .step {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            border: 1px solid #bbb;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+        .formula {
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            margin: 4px 0;
+        }
+        .reference,
+        .caption {
+            color: #555;
+            font-size: 9pt;
+        }
+        .report-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 6px auto;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+        }
+        .result-table th,
+        .result-table td {
+            border: 1px solid #ccc;
+            padding: 4px;
+            text-align: left;
+        }
+    </style>
+    <script>
+    window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<table class="print-layout">
+    <thead>
+        <tr>
+            <td>
+                <table class="page-header">
+                    <tr>
+                        <th>Project</th>
+                        <td>{{ project_name }}</td>
+                        <th>Title</th>
+                        <td>{{ title }}</td>
+                    </tr>
+                    <tr class="identity-row">
+                        <td colspan="2"><strong>Element ID:</strong> {{ element_id }}</td>
+                        <td><strong>Revision:</strong> {{ revision }}</td>
+                        <td><strong>Date:</strong> {{ date }}</td>
+                    </tr>
+                    {% if calculation_name %}
+                    <tr>
+                        <th>Calculation</th>
+                        <td colspan="3">{{ calculation_name }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="content-cell">
+                {% for step in steps %}
+                <section class="step">
+                    <h3>{{ step.title }}</h3>
+                    {% if step.text_before %}<p>{{ step.text_before }}</p>{% endif %}
+
+                    {% if step.component.kind == "expression" %}
+                    <div class="formula">\( {{ step.component.formula }} \)</div>
+                    <div class="formula">\( {{ step.component.substitution }} \)</div>
+                    <div class="formula"><strong>\( {{ step.component.result }} \)</strong></div>
+                    {% if step.component.reference %}
+                    <p class="reference"><strong>Reference:</strong> {{ step.component.reference }}</p>
+                    {% endif %}
+                    {% elif step.component.kind == "drawing" %}
+                    <h4>{{ step.component.title }}</h4>
+                    <img
+                        src="{{ step.component.image_path }}"
+                        alt="{{ step.component.title }}"
+                        class="report-image"
+                        style="width: {{ step.component.width_percent }}%;"
+                    >
+                    {% if step.component.caption %}<p class="caption">{{ step.component.caption }}</p>{% endif %}
+                    {% elif step.component.kind == "table" %}
+                    <h4>{{ step.component.title }}</h4>
+                    <table class="result-table">
+                        <tr>
+                            {% for column in step.component.columns %}<th>{{ column }}</th>{% endfor %}
+                        </tr>
+                        {% for row in step.component.rows %}
+                        <tr>
+                            {% for column in step.component.columns %}
+                            <td>{% if column == "Symbol" %}\( {{ row[column] }} \){% else %}{{ row[column] }}{% endif %}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% elif step.component.kind == "text" %}
+                    <p>{{ step.component.text }}</p>
+                    {% endif %}
+
+                    {% if step.text_after %}<p>{{ step.text_after }}</p>{% endif %}
+                </section>
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

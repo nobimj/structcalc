@@ -78,6 +78,15 @@
     {% if calculation_name %}
     <tr><td><strong>Calculation</strong></td><td>{{ calculation_name }}</td></tr>
     {% endif %}
+    {% if element_id %}
+    <tr><td><strong>Element ID</strong></td><td>{{ element_id }}</td></tr>
+    {% endif %}
+    {% if revision %}
+    <tr><td><strong>Revision</strong></td><td>{{ revision }}</td></tr>
+    {% endif %}
+    {% if date %}
+    <tr><td><strong>Date</strong></td><td>{{ date }}</td></tr>
+    {% endif %}
     {% for key, value in metadata.items() %}
     <tr><td><strong>{{ key }}</strong></td><td>{{ value }}</td></tr>
     {% endfor %}

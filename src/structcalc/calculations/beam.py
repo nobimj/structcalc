@@ -16,6 +16,11 @@ class BeamInputs:
     udl: float
     width: float
     height: float
+    project_name: str = "Demo Project"
+    title: str = "Beam Calculation Report"
+    element_id: str = ""
+    revision: str = ""
+    report_date: str = ""
 
 
 BEAM_INPUTS = {
@@ -47,9 +52,12 @@ def simply_supported_beam_udl(inputs: BeamInputs) -> ReportCalculationSheet:
 
     sheet.set_header(
         {
-            "title": "Beam Calculation Report",
-            "project_name": "Demo Project",
-            "calculation_name": "Simply Supported Beam",
+            "title": inputs.title,
+            "project_name": inputs.project_name,
+            "calculation_name": "Simply Supported Beam v1",
+            "element_id": inputs.element_id,
+            "revision": inputs.revision,
+            "date": inputs.report_date,
         }
     )
     sheet.set_inputs_from_dataclass(inputs, BEAM_INPUTS)
