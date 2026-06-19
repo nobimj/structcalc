@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from structcalc.calculations.beam import BeamInputs, simply_supported_beam_udl
+from structcalc.reports.components.expression import ManualExpression
 
 
 def test_simply_supported_beam_udl():
@@ -68,6 +69,13 @@ def test_simply_supported_beam_udl():
     assert "5.000" in moment_step.component.substitution
     assert moment_step.component.result == r"M_{Ed} = 62.500\ \text{kNm}"
 
+    shear_step = sheet.steps[5]
+    assert shear_step.title == "2. Maximum shear force"
+    assert isinstance(shear_step.component.auto_expression, ManualExpression)
+    assert shear_step.component.formula == r"V_{Ed} = \frac{wL}{2}"
+    assert shear_step.component.substitution == r"V_{Ed} = \frac{20.000 \times 5.000}{2}"
+    assert shear_step.component.result == r"V_{Ed} = 50.000\ \text{kN}"
+
 
 def test_simply_supported_beam_udl_stores_header_fields():
     inputs = BeamInputs(
@@ -103,7 +111,7 @@ def test_simply_supported_beam_udl_uses_blank_date_when_not_passed():
 
 
 def test_generate_html_report_supports_template_selection(tmp_path):
-    from structcalc.reports.html_report import generate_html_report
+    from structcalc.reports.renderers.html import generate_html_report
 
     inputs = BeamInputs(
         span=5.0,
@@ -132,7 +140,7 @@ def test_generate_html_report_supports_template_selection(tmp_path):
 
 
 def test_generate_html_report_supports_a4_print_template(tmp_path):
-    from structcalc.reports.html_report import generate_html_report
+    from structcalc.reports.renderers.html import generate_html_report
 
     inputs = BeamInputs(
         span=5.0,
@@ -168,6 +176,7 @@ def test_simply_supported_beam_udl_stores_header_fields():
         udl=20.0,
         width=300.0,
         height=500.0,
+        fck=30.0,
         project_name="Project Alpha",
         title="Custom Beam Report",
         element_id="B-101",
@@ -187,7 +196,7 @@ def test_simply_supported_beam_udl_stores_header_fields():
 
 
 def test_simply_supported_beam_udl_uses_blank_date_when_not_passed():
-    inputs = BeamInputs(span=5.0, udl=20.0, width=300.0, height=500.0)
+    inputs = BeamInputs(span=5.0, udl=20.0, width=300.0, height=500.0, fck=30.0)
 
     sheet = simply_supported_beam_udl(inputs)
 
@@ -195,13 +204,14 @@ def test_simply_supported_beam_udl_uses_blank_date_when_not_passed():
 
 
 def test_generate_html_report_supports_template_selection(tmp_path):
-    from structcalc.reports.html_report import generate_html_report
+    from structcalc.reports.renderers.html import generate_html_report
 
     inputs = BeamInputs(
         span=5.0,
         udl=20.0,
         width=300.0,
         height=500.0,
+        fck=30.0,
         element_id="B-102",
         revision="C01",
         report_date="2026-06-19",
@@ -223,13 +233,14 @@ def test_generate_html_report_supports_template_selection(tmp_path):
 
 
 def test_generate_html_report_supports_a4_print_template(tmp_path):
-    from structcalc.reports.html_report import generate_html_report
+    from structcalc.reports.renderers.html import generate_html_report
 
     inputs = BeamInputs(
         span=5.0,
         udl=20.0,
         width=300.0,
         height=500.0,
+        fck=30.0,
         project_name="Project Beta",
         title="A4 Beam Report",
         element_id="B-103",

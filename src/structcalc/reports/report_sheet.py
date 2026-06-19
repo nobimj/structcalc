@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field, is_dataclass
 from typing import Any
 
-from structcalc.reports.report_expression import AutoExpression, Expression
+from structcalc.reports.components.expression import AutoExpression, Expression
+from structcalc.reports.components.table import Table
 from structcalc.reports.report_step import ReportStep
-from structcalc.reports.report_table import Table
 
 InputValue = float | tuple[float, str]
 InputDefinition = dict[str, str]

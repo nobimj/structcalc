@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
-from structcalc.reports.report_expression import AutoExpression, Expression
+from structcalc.reports.components.expression import (
+    AutoExpression,
+    Expression,
+    ManualExpression,
+)
 from structcalc.reports.report_sheet import ReportCalculationSheet
 from structcalc.reports.report_step import TextBlock
 
@@ -34,6 +38,25 @@ def test_expression_precision_override():
 
     assert expression.value == 1000.0 / 3.0
     assert expression.result == r"A_s = 333\ \text{mm^2}"
+
+
+def test_expression_accepts_manual_expression():
+    expression = Expression(
+        ManualExpression(
+            lhs=r"V_{Ed}",
+            formula=r"V_{Ed} = \frac{wL}{2}",
+            substitution=r"V_{Ed} = \frac{20.000 \times 5.000}{2}",
+            result=r"V_{Ed} = 50.000\ \text{kN}",
+            value=50.0,
+        ),
+        unit="kN",
+        precision=3,
+    )
+
+    assert expression.value == 50.0
+    assert expression.formula == r"V_{Ed} = \frac{wL}{2}"
+    assert expression.substitution == r"V_{Ed} = \frac{20.000 \times 5.000}{2}"
+    assert expression.result == r"V_{Ed} = 50.000\ \text{kN}"
 
 
 def test_report_calculation_sheet_stores_report_data_and_final_values():

@@ -1,5 +1,5 @@
 from structcalc.calculations.beam import BeamInputs, simply_supported_beam_udl
-from structcalc.reports.html_report import generate_html_report
+from structcalc.reports.renderers.html import generate_html_report
 
 
 inputs = BeamInputs(

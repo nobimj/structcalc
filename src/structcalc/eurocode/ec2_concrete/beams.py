@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from structcalc.reports.report_expression import AutoExpression, Expression
+from structcalc.reports.components.expression import AutoExpression, Expression
 from structcalc.reports.report_sheet import ReportCalculationSheet
 
 

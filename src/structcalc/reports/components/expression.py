@@ -3,15 +3,24 @@ from dataclasses import dataclass, field
 import sympy as sp
 
 from structcalc.common.settings import DEFAULT_PRECISION
-from structcalc.reports.report_auto_expression import (
+from structcalc.reports.components.auto_expression import (
     AutoExpression,
     OrderedLatexPrinter,
 )
 
 
 @dataclass
+class ManualExpression:
+    lhs: str
+    formula: str
+    substitution: str
+    result: str
+    value: float
+
+
+@dataclass
 class Expression:
-    auto_expression: AutoExpression
+    auto_expression: AutoExpression | ManualExpression
     unit: str = ""
     precision: int = DEFAULT_PRECISION
     reference: str = ""
@@ -23,6 +32,13 @@ class Expression:
     result: str = field(init=False)
 
     def __post_init__(self) -> None:
+        if isinstance(self.auto_expression, ManualExpression):
+            self.value = float(self.auto_expression.value)
+            self.formula = self.auto_expression.formula
+            self.substitution = self.auto_expression.substitution
+            self.result = self.auto_expression.result
+            return
+
         self.value = float(self.auto_expression.result())
         self.formula = rf"{self.auto_expression.lhs} = {self.auto_expression.latex(False)}"
         self.substitution = (
@@ -72,4 +88,4 @@ class Expression:
 
 ReportExpression = Expression
 
-__all__ = ["AutoExpression", "Expression", "ReportExpression"]
+__all__ = ["AutoExpression", "Expression", "ManualExpression", "ReportExpression"]

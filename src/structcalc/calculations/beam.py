@@ -4,10 +4,14 @@ from structcalc.graphics.rc_section import (
     draw_rectangular_section,
     draw_rectangular_stress_distribution,
 )
-from structcalc.reports.report_expression import AutoExpression, Expression
-from structcalc.reports.report_figure import Drawing
+from structcalc.reports.components.drawing import Drawing
+from structcalc.reports.components.expression import (
+    AutoExpression,
+    Expression,
+    ManualExpression,
+)
+from structcalc.reports.components.table import Table
 from structcalc.reports.report_sheet import ReportCalculationSheet
-from structcalc.reports.report_table import Table
 
 
 @dataclass
@@ -134,13 +138,24 @@ def simply_supported_beam_udl(inputs: BeamInputs) -> ReportCalculationSheet:
         text_after="",
     )
 
+    shear_value = inputs.udl * inputs.span / 2
+
     sheet.add_step(
         variable="V__Ed",
         metadata="Shear calculation",
         title="2. Maximum shear force",
         text_before="",
         component=Expression(
-            AutoExpression(r"V_{Ed}", "w*L/2", **sheet.values),
+            ManualExpression(
+                lhs=r"V_{Ed}",
+                formula=r"V_{Ed} = \frac{wL}{2}",
+                substitution=(
+                    rf"V_{{Ed}} = \frac{{{inputs.udl:.3f} \times "
+                    rf"{inputs.span:.3f}}}{{2}}"
+                ),
+                result=rf"V_{{Ed}} = {shear_value:.3f}\ \text{{kN}}",
+                value=shear_value,
+            ),
             unit="kN",
             precision=3,
             reference="Basic beam formula: simply supported beam under UDL",
