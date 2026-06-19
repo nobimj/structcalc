@@ -255,7 +255,7 @@ def _stress_distribution_table(
     second_moment: float,
 ) -> Table:
     table = Table(
-        title="Stress distribution through section depth",
+        title="Stress distribution through section depth 2",
         columns=["Position", "y from centroid (mm)", "Stress (N/mm^2)"],
     )
 
