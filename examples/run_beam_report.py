@@ -20,5 +20,5 @@ sheet = simply_supported_beam_udl(inputs)
 generate_html_report(
     sheet,
     output_path="outputs/beam_report.html",
-    template_name="calculation_report_print_a4.html",
+    template_name="print/a4.html",
 )

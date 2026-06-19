@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field, is_dataclass
 from typing import Any
 
+from structcalc.reports.report_expression import AutoExpression, Expression
 from structcalc.reports.report_step import ReportStep
 from structcalc.reports.report_table import Table
 
@@ -115,6 +116,52 @@ class ReportCalculationSheet:
             return f"{value} {unit}"
 
         return f"{value}"
+
+    def add_component_step(
+        self,
+        title: str,
+        component: Any,
+        variable: str | None = None,
+        metadata: str | dict[str, object] | None = None,
+        text_before: str = "",
+        text_after: str = "",
+    ) -> float | None:
+        return self.add_step(
+            variable=variable,
+            metadata=metadata,
+            title=title,
+            text_before=text_before,
+            component=component,
+            text_after=text_after,
+        )
+
+    def add_expression_step(
+        self,
+        variable: str,
+        title: str,
+        lhs: str,
+        formula: str,
+        values: dict[str, float] | None = None,
+        unit: str = "",
+        precision: int = 3,
+        reference: str = "",
+        metadata: str | dict[str, object] | None = None,
+        text_before: str = "",
+        text_after: str = "",
+    ) -> float:
+        return self.add_step(
+            variable=variable,
+            metadata=metadata,
+            title=title,
+            text_before=text_before,
+            component=Expression(
+                AutoExpression(lhs, formula, **(values or self.values)),
+                unit=unit,
+                precision=precision,
+                reference=reference,
+            ),
+            text_after=text_after,
+        )
 
     def add_step(
         self,
