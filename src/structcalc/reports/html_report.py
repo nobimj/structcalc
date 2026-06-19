@@ -25,6 +25,7 @@ def _prepare_drawing_paths(sheet: ReportCalculationSheet, output_dir: Path) -> N
 def generate_html_report(
     sheet: ReportCalculationSheet,
     output_path: str | Path,
+    template_name: str = "calculation_report.html",
 ):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -37,12 +38,15 @@ def generate_html_report(
         autoescape=select_autoescape(["html", "xml"]),
     )
 
-    template = env.get_template("calculation_report.html")
+    template = env.get_template(template_name)
 
     html = template.render(
         title=sheet.header.get("title", "Calculation Report"),
         project_name=sheet.header.get("project_name", ""),
         calculation_name=sheet.header.get("calculation_name", ""),
+        element_id=sheet.header.get("element_id", ""),
+        revision=sheet.header.get("revision", ""),
+        date=sheet.header.get("date", ""),
         footer=sheet.footer,
         metadata=sheet.metadata,
         steps=sheet.steps,
