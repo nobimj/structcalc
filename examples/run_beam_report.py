@@ -12,6 +12,7 @@ inputs = BeamInputs(
     element_id="B1",
     revision="R0",
     report_date="2026-06-19",
+    fck=30,
 )
 
 sheet = simply_supported_beam_udl(inputs)
