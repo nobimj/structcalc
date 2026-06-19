@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            line-height: 1.5;
+            color: #222;
+        }
+        h1, h2, h3 {
+            color: #111;
+        }
+        .meta, .input-table, .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+        .meta td, .input-table td, .input-table th, .result-table td, .result-table th {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        .step {
+            border: 1px solid #bbb;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        .formula {
+            font-family: "Times New Roman", serif;
+            font-size: 18px;
+            background: white;
+            padding: 8px;
+            border-left: 4px solid #555;
+            margin: 8px 0;
+        }
+        .reference {
+            font-size: 13px;
+            color: #555;
+        }
+        .figure-block {
+            margin: 24px 0;
+            padding: 12px;
+            border: 1px solid #ccc;
+            background: #fafafa;
+        }
+        .report-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 12px auto;
+        }
+        .caption {
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+        }
+    </style>
+    <script>
+    window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<h1>{{ title }}</h1>
+
+<table class="meta">
+    {% if project_name %}
+    <tr><td><strong>Project</strong></td><td>{{ project_name }}</td></tr>
+    {% endif %}
+    {% if calculation_name %}
+    <tr><td><strong>Calculation</strong></td><td>{{ calculation_name }}</td></tr>
+    {% endif %}
+    {% for key, value in metadata.items() %}
+    <tr><td><strong>{{ key }}</strong></td><td>{{ value }}</td></tr>
+    {% endfor %}
+</table>
+
+{% for step in steps %}
+<div class="step">
+    <h3>{{ step.title }}</h3>
+
+    {% if step.text_before %}
+    <p>{{ step.text_before }}</p>
+    {% endif %}
+
+    {% if step.component.kind == "expression" %}
+    <div class="formula">\( {{ step.component.formula }} \)</div>
+    <div class="formula">\( {{ step.component.substitution }} \)</div>
+    <div class="formula"><strong>\( {{ step.component.result }} \)</strong></div>
+    {% if step.component.reference %}
+    <p class="reference"><strong>Reference:</strong> {{ step.component.reference }}</p>
+    {% endif %}
+    {% elif step.component.kind == "drawing" %}
+    <div class="figure-block">
+        <h4>{{ step.component.title }}</h4>
+        <img
+            src="{{ step.component.image_path }}"
+            alt="{{ step.component.title }}"
+            class="report-image"
+            style="width: {{ step.component.width_percent }}%;"
+        >
+        {% if step.component.caption %}
+        <p class="caption">{{ step.component.caption }}</p>
+        {% endif %}
+    </div>
+    {% elif step.component.kind == "table" %}
+    <h4>{{ step.component.title }}</h4>
+    <table class="result-table">
+        <tr>
+            {% for column in step.component.columns %}
+            <th>{{ column }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in step.component.rows %}
+        <tr>
+            {% for column in step.component.columns %}
+            {% if column == "Symbol" %}
+            <td>\( {{ row[column] }} \)</td>
+            {% else %}
+            <td>{{ row[column] }}</td>
+            {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% elif step.component.kind == "text" %}
+    <p>{{ step.component.text }}</p>
+    {% endif %}
+
+    {% if step.text_after %}
+    <p>{{ step.text_after }}</p>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% if footer %}
+<h2>Footer</h2>
+<table class="meta">
+    {% for key, value in footer.items() %}
+    <tr><td><strong>{{ key }}</strong></td><td>{{ value }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+</body>
+</html>

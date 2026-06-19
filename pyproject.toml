@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "structcalc"
+version = "0.1.0"
+description = "Structural engineering calculations"
+authors = [
+    { name = "Nobi Jacob" }
+]
+dependencies = [
+    "jinja2",
+    "matplotlib",
+    "pydantic",
+    "sympy"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-p no:cacheprovider"
+pythonpath = ["src"]
+testpaths = ["tests"]
+norecursedirs = [
+    ".pytest_cache",
+    "__pycache__",
+    "notebooks",
+    "outputs",
+    "pytest-cache-files-*",
+    "src/structcalc.egg-info"
+]

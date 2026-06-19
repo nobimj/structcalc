@@ -1,0 +1,59 @@
+# =========================
+# Python virtual environment
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# Python cache files
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Pytest / test cache
+# =========================
+.pytest_cache/
+pytest-cache-files-*/
+
+# =========================
+# Build / packaging outputs
+# =========================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Jupyter notebooks
+# =========================
+.ipynb_checkpoints/
+
+# Keep notebooks folder, but ignore notebook checkpoints
+# notebooks/
+
+# =========================
+# Project generated outputs
+# =========================
+outputs/
+
+# =========================
+# Environment variables / secrets
+# =========================
+.env
+.env.*
+
+# =========================
+# IDE / editor files
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
