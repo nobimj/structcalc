@@ -40,13 +40,14 @@ class ReportCalculationSheet:
         value: float,
         unit: str = "",
         label: str = "",
+        display_symbol: str | None = None,
     ) -> None:
         self.inputs[name] = value
 
         self.input_table.add_row(
             {
                 "Parameter": label or name,
-                "Symbol": name,
+                "Symbol": display_symbol or name,
                 "Value": self._value_with_unit(value, unit),
             }
         )
@@ -71,10 +72,17 @@ class ReportCalculationSheet:
         for field_name, definition in input_definitions.items():
             value = getattr(inputs, field_name)
             symbol = definition.get("symbol", field_name)
+            display_symbol = definition.get("display_symbol", symbol)
             label = definition.get("label", field_name)
             unit = definition.get("unit", "")
 
-            self.set_input(symbol, value, unit=unit, label=label)
+            self.set_input(
+                symbol,
+                value,
+                unit=unit,
+                label=label,
+                display_symbol=display_symbol,
+            )
 
     def set_header(self, values: dict[str, str]) -> None:
         self.header.update(values)
@@ -195,9 +203,10 @@ class ReportCalculationSheet:
         return value
 
     def _title_without_number(self, title: str) -> str:
-        prefix, separator, rest = title.partition(". ")
+        prefix, separator, rest = title.partition(" ")
+        prefix = prefix.rstrip(".")
 
-        if separator and prefix.isdigit():
+        if separator and all(part.isdigit() for part in prefix.split(".")):
             return rest
 
         return title

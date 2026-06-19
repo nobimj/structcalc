@@ -16,12 +16,13 @@ class BeamInputs:
     udl: float
     width: float
     height: float
+    fck: float 
     project_name: str = "Demo Project"
     title: str = "Beam Calculation Report"
     element_id: str = ""
     revision: str = ""
     report_date: str = ""
-
+    
 
 BEAM_INPUTS = {
     "span": {
@@ -43,6 +44,12 @@ BEAM_INPUTS = {
         "symbol": "h",
         "label": "Section height",
         "unit": "mm",
+    },
+    "fck": {
+        "symbol": "f__ck",
+        "display_symbol": r"f_{ck}",
+        "label": "Characteristic compressive strength of concrete",
+        "unit": "MPa",
     },
 }
 
@@ -110,6 +117,19 @@ def simply_supported_beam_udl(inputs: BeamInputs) -> ReportCalculationSheet:
             unit="kNm",
             precision=3,
             reference="Basic beam formula: simply supported beam under UDL",
+        ),
+        text_after="",
+    )
+    sheet.add_step(
+        variable="f__ck",
+        metadata="Moment calculation",
+        title="1.1 Characteristic compressive strength of concrete",
+        text_before="",
+        component=Expression(
+            AutoExpression(r"f_{ck}", "f__ck", **sheet.values),
+            unit="MPa",
+            precision=3,
+            reference="Characteristic compressive strength of concrete",
         ),
         text_after="",
     )
